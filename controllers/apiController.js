@@ -23,7 +23,7 @@ exports.getId = async (req, res, next) => {
         .status(404)
         .json({ message: "No movie found with provided id" });
     }
-    res.status(200).json(movie);
+    res.status(200).json({ message: movie });
   } catch (err) {
     console.log("Error: ", err);
     next(err);
