@@ -1,9 +1,15 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const apiRouter = require("./routes/apiRouter");
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "https://to00bs65-3005-project-3-react-front-end.onrender.com/",
+  })
+);
 
 app.use("/api", apiRouter);
 

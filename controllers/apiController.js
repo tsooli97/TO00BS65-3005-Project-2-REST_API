@@ -1,4 +1,3 @@
-const movie = require("../models/movie");
 const Movie = require("../models/movie");
 const { body, validationResult } = require("express-validator");
 
@@ -48,12 +47,12 @@ exports.postAdd = [
     .isLength({ max: 500 })
     .withMessage("Bio max length is 500 characters"),
   body("director")
-    .optional()
+    .optional({ values: "falsy" })
     .trim()
-    .isLength({ min: 3, max: 100 })
-    .withMessage("Director name must be between 3 and 100 characters")
-    .isAlpha("fi-FI", { ignore: " " })
-    .withMessage("All of the characters must be letters of the alphabet only"),
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Director name must be between 2 and 100 characters")
+    .isString()
+    .withMessage("Director name must be a string"),
   body("starring")
     .optional()
     .isArray()
@@ -62,8 +61,8 @@ exports.postAdd = [
     .isString()
     .withMessage("Actor names must be strings"),
   body("starring.*.role").isString().withMessage("Roles must be strings"),
-  body("genre").optional().isArray().withMessage("Genre must be an array"),
-  body("genre.*").isString().withMessage("Each genre must be a string"),
+  body("genres").optional().isArray().withMessage("Genres must be an array"),
+  body("genres.*").isString().withMessage("Each genre must be a string"),
 
   async (req, res) => {
     console.log("Body: ", req.body);
@@ -78,16 +77,18 @@ exports.postAdd = [
         name: req.body.name,
         year: req.body.year,
         bio: req.body.bio,
+        director: req.body.director,
         starring: req.body.starring,
-        genre: req.body.genre,
+        genres: req.body.genres,
       });
       await movie.save();
       return res.status(201).json({ message: "Succesfully created movie" });
-    } catch (err) {
-      console.log("Error: ", err);
-      res.status(500).json({
-        message: `Error in adding movie`,
-      });
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        res.status(400).json({ errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Server error" });
+      }
     }
   },
 ];
@@ -122,8 +123,8 @@ exports.patchId = [
     .isString()
     .withMessage("Actor names must be strings"),
   body("starring.*.role").isString().withMessage("Roles must be strings"),
-  body("genre").optional().isArray().withMessage("Genre must be an array"),
-  body("genre.*").isString().withMessage("Each genre must be a string"),
+  body("genres").optional().isArray().withMessage("Genres must be an array"),
+  body("genres.*").isString().withMessage("Each genre must be a string"),
 
   async (req, res, next) => {
     console.log("Params ID: ", req.params.id);
@@ -144,8 +145,9 @@ exports.patchId = [
         name: req.body.name,
         year: req.body.year,
         bio: req.body.bio,
+        director: req.body.director,
         starring: req.body.starring,
-        genre: req.body.genre,
+        genres: req.body.genres,
       });
 
       if (!response) {
