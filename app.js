@@ -7,7 +7,7 @@ const apiRouter = require("./routes/apiRouter");
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://to00bs65-3005-project-3-react-front-end.onrender.com/",
+    origin: "https://to00bs65-3005-project-3-react-front-end.onrender.com",
   })
 );
 
