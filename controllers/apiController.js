@@ -141,7 +141,7 @@ exports.patchId = [
     }
 
     try {
-      const response = await movie.findByIdAndUpdate(req.params.id, {
+      const response = await Movie.findByIdAndUpdate(req.params.id, {
         name: req.body.name,
         year: req.body.year,
         bio: req.body.bio,
@@ -169,7 +169,7 @@ exports.deleteId = async (req, res, next) => {
   console.log("Params ID: ", req.params.id);
 
   try {
-    const response = await movie.findByIdAndDelete(req.params.id);
+    const response = await Movie.findByIdAndDelete(req.params.id);
     console.log(response);
     if (!response) {
       return res
